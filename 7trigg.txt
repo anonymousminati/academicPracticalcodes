@@ -1,0 +1,48 @@
+create database trigg;
+use trigg;
+create table stud(sid int primary key,name varchar(20),issued varchar(1),bname varchar(20));
+insert into stud values(1,'y','i','my world');
+create table issued (sid int,bname varchar(20));
+desc stud;
+desc issued;
+
+delimiter //
+create trigger yash
+before insert
+on stud
+for each row
+begin
+insert into issued values(new.sid,new.bname);
+end;
+//
+delimiter ;
+insert into stud values(2,'karan','i','my story');
+select * from issued;
+
+delimiter //
+create trigger yash1
+before delete
+on stud
+for each row
+begin
+delete from issued where sid=old.sid;
+end;
+//
+delimiter ;
+delete from stud where sid=2;
+select * from issued;
+
+insert into stud values(2,'karan','i','my story');
+
+create trigger yash3
+after update
+on stud
+for each row
+begin
+update stud
+set sid=new.sid where sid= old.sid;
+end;
+//
+delimiter ;
+update stud set sid=3 where sid =2;
+select * from issued;

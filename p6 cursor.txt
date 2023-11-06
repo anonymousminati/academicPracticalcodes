@@ -1,0 +1,39 @@
+create database p7;
+use p7;
+create table O_rollcall(rno int(11) primary key,name varchar(20),addr varchar (30));
+create table N_rollcall(rno int(11) ,name varchar(20),addr varchar (30));
+desc O_rollcall;
+desc N_rollcall;
+insert into O_rollcall values(1,'sunny','wabletown');
+insert into O_rollcall values(2,'harshit','naxal');
+insert into O_rollcall values(3,'vivek','latur');
+insert into O_rollcall values(4,'sahil','mumbai');
+insert into O_rollcall values(5,'bitboi','bihar');
+insert into N_rollcall values(1,'sunny','wabletown');
+insert into N_rollcall values(2,'harshit','naxal');
+insert into N_rollcall values(3,'vivek','latur');
+select * from O_rollcall;
+select * from N_rollcall;
+delimiter //
+create procedure n2(IN rnol int)
+begin
+declare rno2 int;
+declare exit_cond boolean;
+declare cl cursor for select rno from o_rollcall where rno>rnol;
+declare continue handler for not found set exit_cond=TRUE;
+open cl;
+l1: loop
+fetch cl into rno2;
+if not exists(select * from n_rollcall where rno= rno2) then
+insert into n_rollcall select * from o_rollcall where rno=rno2;
+end if;
+if exit_cond then
+close cl;
+leave l1;
+end if;
+end loop l1;
+end;
+//
+delimiter ;
+call n2(3);
+select * from N_rollcall;

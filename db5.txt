@@ -1,0 +1,59 @@
+
+
+Group A: Lab Assignment No.7
+
+TITLE: PL/SQL Stored Procedure and Stored Function.
+Write a Stored Procedure namely proc_Grade for the categorization of student. If marks scored by students in examination is <=1500 and marks>=990 then student will be placed in distinction category if marks scored are between 989 and900 category is first class, if marks 899 and 825 category is Higher Second Class. 
+Write a PL/SQL block for using procedure created with above requirement.
+Stud_Marks(name, total_marks)
+Result(Roll,Name, Class)
+Frame the separate problem statement for writing PL/SQL Stored Procedure and function, inline with above statement. The problem statement should clearly state the requirements.
+------------------------------------------------------------------------------------------------------
+
+use saket;
+
+
+SET GLOBAL log_bin_trust_function_creators = 1;
+
+CREATE TABLE stud_marks ( roll_no int primary key, name varchar(20) not null, total_marks int not null ); 
+
+INSERT INTO stud_marks VALUES (0001, 'Saket', 1500);
+INSERT INTO stud_marks VALUES (0002, 'VAIBHAV', 1000); 
+INSERT INTO stud_marks VALUES (0003, 'AVISHKAR', 820); 
+INSERT INTO stud_marks VALUES (0004, 'ABRAR', 200); 
+INSERT INTO stud_marks VALUES (0005, 'MANOJ', 189); 
+CREATE table result( rollno int primary key, name varchar(20) not null, class varchar(20)); 
+delimiter //
+create procedure proc_grade(in marks int,out class varchar(20)) 
+begin 
+if marks between 990 and 1500 then 
+set class='Distincton'; 
+elseif marks between 890 and 989 then 
+set class='First Class'; 
+elseif marks between 825 and 889 then 
+set class='Higher Second Class'; 
+else 
+set class = 'Fail'; 
+end if; 
+end ; 
+//
+
+create function getresult(Roll int) 
+returns varchar(20) 
+begin 
+declare tempmarks int; 
+declare grade varchar(20); 
+declare stud_name varchar(20); 
+select sm.total_marks, sm.name into tempmarks, stud_name 
+from stud_marks sm where sm.roll_no=Roll; 
+call proc_grade(tempmarks,@grade); 
+insert into result values(Roll,stud_name,@grade); 
+return @grade; 
+end; 
+// 
+
+select getresult(1); 
+select getresult(2); 
+// 
+
+select * from result; 

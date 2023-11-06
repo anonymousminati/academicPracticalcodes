@@ -1,0 +1,33 @@
+create database saket;
+use saket;
+CREATE TABLE borrower(roll_no int,name varchar(20),date_of_issue date,book varchar(20)); 
+select * from borrower; 
+CREATE TABLE library_audit(roll_no int,name varchar(20),date_of_issue date,book varchar(20)); 
+
+delimiter //
+create trigger auditor after insert on borrower for each row 
+begin 
+insert into library_audit values(new.roll_no, new.name,new.date_of_issue, new.book); 
+end; 
+// 
+delimiter ;
+
+INSERT INTO borrower VALUES(006 ,'MANOJ', '2022-10-15', 'DS');
+select * from library_audit; 
+
+select * from borrower;
+
+delimiter //
+
+create trigger auditor1 after update on borrower for each row 
+begin 
+insert into library_audit values(new.roll_no,new.name,new.date_of_issue,new.book); 
+end; 
+// 
+delimiter ;
+update borrower set name = 'PAVAN' where roll_no = 4; 
+SELECT * FROM borrower; 
+
+SELECT * FROM library_audit; 
+
+
